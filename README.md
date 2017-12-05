@@ -6,7 +6,7 @@ https://github.com/MatthewGeekTalk/ML-Git
 
 ### PASCAL VOC 2012:
 * http://host.robots.ox.ac.uk/pascal/VOC/voc2012/
-* 链接：https://pan.baidu.com/s/1boSpe5D 密码：alum
+* https://pjreddie.com/projects/pascal-voc-dataset-mirror/
 
 ### RCNN:
 https://arxiv.org/abs/1311.2524
