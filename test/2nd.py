@@ -1,5 +1,13 @@
-import numpy as np
+import tensorflow as tf
 
 if __name__ == '__main__':
-    a = np.asarray([['a', 'b'], ['c', 'd']])
-    a.reshape(((0, 0), (1, 1)))
+    a = tf.constant(1.)
+    b = tf.constant(1.)
+    b = 2 * a
+
+    g = tf.gradients(a + b, [a, b])
+    init = tf.global_variables_initializer()
+
+    with tf.Session() as sess:
+        sess.run(init)
+        print(sess.run(g))
