@@ -29,13 +29,15 @@ if __name__ == '__main__':
 
     A = _anchors.shape[0]
 
-    x = np.arange(0, 224)
-    y = np.arange(0, 224)
+    x = np.arange(0, 14)
+    y = np.arange(0, 14)
 
     nx, ny = np.meshgrid(x, y)
 
     matrix = np.vstack((nx.ravel(), ny.ravel(),
                         nx.ravel(), ny.ravel())).transpose()
+
+    print(matrix)
 
     K = matrix.shape[0]
 
@@ -45,10 +47,12 @@ if __name__ == '__main__':
 
     all_anchors = all_anchors.reshape((K * A, 4))
 
+    print(all_anchors)
+
     inds_inside = np.where((all_anchors[:, 0] >= 0) &
                            (all_anchors[:, 1] >= 0) &
-                           (all_anchors[:, 2] < 224) &  # width
-                           (all_anchors[:, 3] < 224))[0]
+                           (all_anchors[:, 2] < 14) &  # width
+                           (all_anchors[:, 3] < 14))[0]
 
     anchors = all_anchors[inds_inside, :]
 
