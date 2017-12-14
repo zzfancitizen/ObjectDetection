@@ -23,6 +23,14 @@ def bbox_overlaps(
     Returns
     -------
     overlaps: (N, K) ndarray of overlap between boxes and query_boxes
+
+    this overlaps contain all ratio
+    each anchor will have ratio with per gt_boxes
+    example for gt_boxes[0]
+    the final overlaps should looks like:
+    anchor 1:
+    ratio of overlap size [0.1, 0.3, ... , 0.8 ] cols number should equals number of gt_boxes
+
     """
     cdef unsigned int N = boxes.shape[0]
     cdef unsigned int K = query_boxes.shape[0]
@@ -32,24 +40,24 @@ def bbox_overlaps(
     cdef unsigned int k, n
     for k in range(K):
         box_area = (
-            (query_boxes[k, 2] - query_boxes[k, 0] + 1) *  # get height on gt boxes
-            (query_boxes[k, 3] - query_boxes[k, 1] + 1)  # get width on gt boxes
+            (query_boxes[k, 2] - query_boxes[k, 0] + 1) *  # get width on gt boxes
+            (query_boxes[k, 3] - query_boxes[k, 1] + 1)  # get height on gt boxes
         )  # get size of gt boxes
         for n in range(N):
             iw = (
                 min(boxes[n, 2], query_boxes[k, 2]) -
-                max(boxes[n, 0], query_boxes[k, 0]) + 1
+                max(boxes[n, 0], query_boxes[k, 0]) + 1  # get overlap width
             )
             if iw > 0:
                 ih = (
                     min(boxes[n, 3], query_boxes[k, 3]) -
-                    max(boxes[n, 1], query_boxes[k, 1]) + 1
+                    max(boxes[n, 1], query_boxes[k, 1]) + 1  # get overlap height
                 )
                 if ih > 0:
                     ua = float(
-                        (boxes[n, 2] - boxes[n, 0] + 1) *
-                        (boxes[n, 3] - boxes[n, 1] + 1) +
+                        (boxes[n, 2] - boxes[n, 0] + 1) *  # get width on anchor
+                        (boxes[n, 3] - boxes[n, 1] + 1) +  # get height on anchor
                         box_area - iw * ih
                     )
-                    overlaps[n, k] = iw * ih / ua
+                    overlaps[n, k] = iw * ih / ua  # get ratio (overlap size) / (total size)
     return overlaps
