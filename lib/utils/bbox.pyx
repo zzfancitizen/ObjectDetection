@@ -32,9 +32,9 @@ def bbox_overlaps(
     cdef unsigned int k, n
     for k in range(K):
         box_area = (
-            (query_boxes[k, 2] - query_boxes[k, 0] + 1) *
-            (query_boxes[k, 3] - query_boxes[k, 1] + 1)
-        )
+            (query_boxes[k, 2] - query_boxes[k, 0] + 1) *  # get height on gt boxes
+            (query_boxes[k, 3] - query_boxes[k, 1] + 1)  # get width on gt boxes
+        )  # get size of gt boxes
         for n in range(N):
             iw = (
                 min(boxes[n, 2], query_boxes[k, 2]) -

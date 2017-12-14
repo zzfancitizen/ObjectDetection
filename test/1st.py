@@ -50,9 +50,7 @@ if __name__ == '__main__':
     print(all_anchors)
 
     inds_inside = np.where((all_anchors[:, 0] >= 0) &
-                           (all_anchors[:, 1] >= 0) &
-                           (all_anchors[:, 2] < 14) &  # width
-                           (all_anchors[:, 3] < 14))[0]
+                           (all_anchors[:, 1] >= 0))[0]
 
     anchors = all_anchors[inds_inside, :]
 
