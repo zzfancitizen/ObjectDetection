@@ -29,7 +29,8 @@ class AnchorTargetLayer(caffe.Layer):
 
     def setup(self, bottom, top):
         layer_params = yaml.load(self.param_str_)
-        anchor_scales = layer_params.get('scales', (8, 16, 32))  # 2^3 2^4 2^5
+        anchor_scales = layer_params.get('scales',
+                                         (8, 16, 32))  # 2^3 2^4 2^5 why it could not cover whole place on source image
         self._anchors = generate_anchors(scales=np.array(anchor_scales))
         self._num_anchors = self._anchors.shape[0]  # 9
         self._feat_stride = layer_params['feat_stride']  # 16
@@ -97,7 +98,7 @@ class AnchorTargetLayer(caffe.Layer):
         shift_y = np.arange(0, height) * self._feat_stride
         shift_x, shift_y = np.meshgrid(shift_x, shift_y)
         shifts = np.vstack((shift_x.ravel(), shift_y.ravel(),
-                            shift_x.ravel(), shift_y.ravel())).transpose()
+                            shift_x.ravel(), shift_y.ravel())).transpose()  # make position in source image
         # add A anchors (1, A, 4) to
         # cell K shifts (K, 1, 4) to get
         # shift anchors (K, A, 4)
@@ -105,7 +106,7 @@ class AnchorTargetLayer(caffe.Layer):
         A = self._num_anchors
         K = shifts.shape[0]
         all_anchors = (self._anchors.reshape((1, A, 4)) +
-                       shifts.reshape((1, K, 4)).transpose((1, 0, 2)))
+                       shifts.reshape((1, K, 4)).transpose((1, 0, 2)))  # all anchors on source image
         all_anchors = all_anchors.reshape((K * A, 4))
         total_anchors = int(K * A)
 
@@ -176,8 +177,9 @@ class AnchorTargetLayer(caffe.Layer):
             # print "was %s inds, disabling %s, now %s inds" % (
             # len(bg_inds), len(disable_inds), np.sum(labels == 0))
 
-        bbox_targets = np.zeros((len(inds_inside), 4), dtype=np.float32)
-        bbox_targets = _compute_targets(anchors, gt_boxes[argmax_overlaps, :])
+        # bbox_targets = np.zeros((len(inds_inside), 4), dtype=np.float32)
+        bbox_targets = _compute_targets(anchors, gt_boxes[argmax_overlaps,
+                                                 :])  # match anchor with the closest ground truth box
 
         bbox_inside_weights = np.zeros((len(inds_inside), 4), dtype=np.float32)
         bbox_inside_weights[labels == 1, :] = np.array(cfg.TRAIN.RPN_BBOX_INSIDE_WEIGHTS)
