@@ -135,11 +135,12 @@ class AnchorTargetLayer(caffe.Layer):
         overlaps = bbox_overlaps(
             np.ascontiguousarray(anchors, dtype=np.float),
             np.ascontiguousarray(gt_boxes, dtype=np.float))
-        argmax_overlaps = overlaps.argmax(axis=1)
-        max_overlaps = overlaps[np.arange(len(inds_inside)), argmax_overlaps]
-        gt_argmax_overlaps = overlaps.argmax(axis=0)
+        argmax_overlaps = overlaps.argmax(axis=1)  # get the biggest indices for each anchors (anchor level)
+        max_overlaps = overlaps[np.arange(len(inds_inside)), argmax_overlaps]  # get biggest ratio number (anchor level)
+        gt_argmax_overlaps = overlaps.argmax(axis=0)  # get the biggest indices for each gt boxes (gt boxes level)
         gt_max_overlaps = overlaps[gt_argmax_overlaps,
-                                   np.arange(overlaps.shape[1])]
+                                   np.arange(
+                                       overlaps.shape[1])]  # get the biggest indices for each gt boxes (gt boxes level)
         gt_argmax_overlaps = np.where(overlaps == gt_max_overlaps)[0]
 
         if not cfg.TRAIN.RPN_CLOBBER_POSITIVES:
@@ -147,21 +148,22 @@ class AnchorTargetLayer(caffe.Layer):
             labels[max_overlaps < cfg.TRAIN.RPN_NEGATIVE_OVERLAP] = 0
 
         # fg label: for each gt, anchor with highest overlap
-        labels[gt_argmax_overlaps] = 1
+        labels[gt_argmax_overlaps] = 1  # biggest ratio
 
         # fg label: above threshold IOU
-        labels[max_overlaps >= cfg.TRAIN.RPN_POSITIVE_OVERLAP] = 1
+        labels[max_overlaps >= cfg.TRAIN.RPN_POSITIVE_OVERLAP] = 1  # bigger than 0.7
 
         if cfg.TRAIN.RPN_CLOBBER_POSITIVES:
             # assign bg labels last so that negative labels can clobber positives
-            labels[max_overlaps < cfg.TRAIN.RPN_NEGATIVE_OVERLAP] = 0
+            labels[max_overlaps < cfg.TRAIN.RPN_NEGATIVE_OVERLAP] = 0  # smaller than 0.3
 
         # subsample positive labels if we have too many
         num_fg = int(cfg.TRAIN.RPN_FG_FRACTION * cfg.TRAIN.RPN_BATCHSIZE)
         fg_inds = np.where(labels == 1)[0]
         if len(fg_inds) > num_fg:
             disable_inds = npr.choice(
-                fg_inds, size=(len(fg_inds) - num_fg), replace=False)
+                fg_inds, size=(len(fg_inds) - num_fg),
+                replace=False)  # for too many sample set some random sample to negative
             labels[disable_inds] = -1
 
         # subsample negative labels if we have too many
