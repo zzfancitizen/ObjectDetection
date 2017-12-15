@@ -37,7 +37,7 @@ if __name__ == '__main__':
     matrix = np.vstack((nx.ravel(), ny.ravel(),
                         nx.ravel(), ny.ravel())).transpose()
 
-    # print(matrix)
+    print(matrix)
 
     K = matrix.shape[0]
 
@@ -57,10 +57,10 @@ if __name__ == '__main__':
     labels = np.empty((len(inds_inside),), dtype=np.float32)
     labels.fill(-1)
 
-    print(np.ascontiguousarray(anchors, dtype=np.float))
-    print(labels)
-    print(_anchors)
-    print(_anchors[np.arange(len(_anchors)), np.argmax(_anchors, axis=1)])
-    print(_anchors.argmax(axis=0))
-    print(_anchors[np.argmax(_anchors, axis=0), np.arange(_anchors.shape[1])])
-    print(np.where(_anchors == _anchors[np.argmax(_anchors, axis=0), np.arange(_anchors.shape[1])])[0])
+    # print(np.ascontiguousarray(anchors, dtype=np.float))
+    # print(labels)
+    # print(_anchors)
+    # print(_anchors[np.arange(len(_anchors)), np.argmax(_anchors, axis=1)])
+    # print(_anchors.argmax(axis=0))
+    # print(_anchors[np.argmax(_anchors, axis=0), np.arange(_anchors.shape[1])])
+    # print(np.where(_anchors == _anchors[np.argmax(_anchors, axis=0), np.arange(_anchors.shape[1])])[0])
