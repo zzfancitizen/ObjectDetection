@@ -19,6 +19,21 @@ if __name__ == '__main__':
     # print(labels)
 
     boxes = np.asarray([[0, 0, 1, 1], [0, 0, 2, 2]]).reshape((2, 4))
+    proposal = np.asarray([[0, 0, 1, 1], [1, 1, 4, 4]]).reshape((2, 4))
+    scores_temp = np.asarray([0.3, 0.7]).reshape((2, 1))
+
+    dets = np.hstack((proposal, scores_temp))
+
+    x1 = dets[:, 0]
+    y1 = dets[:, 1]
+    x2 = dets[:, 2]
+    y2 = dets[:, 3]
+    scores = dets[:, 4]
+
+    suppressed = np.zeros((dets.shape[0]), dtype=np.int)
+    # print(suppressed)
     print(boxes)
-    print(boxes[:, 0::4])
-    print(boxes[:, 1::4])
+    print(proposal)
+    print(scores)
+    orders = scores.argsort()[::-1]
+    print(orders)
